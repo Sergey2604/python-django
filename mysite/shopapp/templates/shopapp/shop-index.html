@@ -13,7 +13,7 @@
                 <li>{{ name|upper }} for ${{ price }}</li>
                 {% if name|length_is:7 %}
                     <span>Lucky product</span>
-                {% endif %} 
+                {% endif %}
             {% empty %}
                 No products here
             {% endfor %}
