@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from .models import Product, Order
 from .admin_mixins import ExportAsCSVMixin
+from .models import Product, Order
 
 
 class OrderInline(admin.TabularInline):
@@ -21,7 +21,7 @@ def mark_unarchieved(modeladmin: admin.ModelAdmin, request: HttpRequest, queryse
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin,ExportAsCSVMixin):
+class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
     actions = [mark_archieved, mark_unarchieved, 'export_csv']
     inlines = [OrderInline]
     # list_display = 'pk', 'name', 'description', 'price', 'discount', 'created_at', 'archieved'

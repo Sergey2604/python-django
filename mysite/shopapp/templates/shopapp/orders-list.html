@@ -8,20 +8,20 @@
     <h1>Orders:</h1>
     {% if orders %}
         <div>
-        {% for order in orders %}
-            <div>
-                <p>Order by {% firstof order.user.first_name order.user.username %}</p>
-                <p>Promocode: {{ order.promocode }}</p>
-                <p>Delivery address {{ order.delivery_address }}</p>
-            <div>Products in order</div>
-            <ul>
-                {% for product in order.products.all %}
-                    <li>{{ product.name }} for ${{ product.price }}</li>
-                {% endfor %}
+            {% for order in orders %}
+                <div>
+                    <p>Order by {% firstof order.user.first_name order.user.username %}</p>
+                    <p>Promocode: {{ order.promocode }}</p>
+                    <p>Delivery address {{ order.delivery_address }}</p>
+                    <div>Products in order</div>
+                    <ul>
+                        {% for product in order.products.all %}
+                            <li>{{ product.name }} for ${{ product.price }}</li>
+                        {% endfor %}
 
-            </ul>
-            </div>
-        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
 
         </div>
     {% else %}
