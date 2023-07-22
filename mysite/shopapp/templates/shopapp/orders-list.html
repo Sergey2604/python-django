@@ -18,7 +18,7 @@
                         {% for product in order.products.all %}
                             <li>{{ product.name }} for ${{ product.price }}</li>
                         {% endfor %}
-
+                    <p>Created order time: {{ order.created_at }}</p>
                     </ul>
                 </div>
             {% endfor %}
@@ -27,6 +27,8 @@
     {% else %}
         No orders yet
     {% endif %}
-
+<div>
+    <a href="{% url 'shopapp:create_order' %}">Return to create order</a>
+</div>
 
 {% endblock %}
