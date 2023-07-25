@@ -6,10 +6,11 @@
 
 {% block body %}
     <h1>Orders:</h1>
-    {% if orders %}
+    {% if object_list %}
         <div>
-            {% for order in orders %}
+            {% for order in object_list %}
                 <div>
+                    <p><a href="{% url 'shopapp:order_details' pk=order.pk %}">Order {{ order.pk }} details</a></p>
                     <p>Order by {% firstof order.user.first_name order.user.username %}</p>
                     <p>Promocode: {{ order.promocode }}</p>
                     <p>Delivery address {{ order.delivery_address }}</p>
@@ -18,7 +19,7 @@
                         {% for product in order.products.all %}
                             <li>{{ product.name }} for ${{ product.price }}</li>
                         {% endfor %}
-                    <p>Created order time: {{ order.created_at }}</p>
+                        <p>Created order time: {{ order.created_at }}</p>
                     </ul>
                 </div>
             {% endfor %}
@@ -27,8 +28,8 @@
     {% else %}
         No orders yet
     {% endif %}
-<div>
-    <a href="{% url 'shopapp:create_order' %}">Return to create order</a>
-</div>
+    <div>
+        <a href="{% url 'shopapp:create_order' %}">Go to create order</a>
+    </div>
 
 {% endblock %}

@@ -14,7 +14,7 @@ class CountRequestMiddlewares:
         self.request_count += 1
         if self.request_count == 1:
             self.time_start = datetime.datetime.now()
-        if self.request_count == 5:
+        if self.request_count == 55:
             self.time_end = datetime.datetime.now()
             print(self.time_start)
             print(self.time_end)
