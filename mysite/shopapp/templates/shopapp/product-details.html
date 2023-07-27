@@ -7,13 +7,20 @@
     <h1>Product <strong>{{ product.name }}</strong></h1>
     <div>
         <div>Product description: <em>{{ product.description }}</em></div>
-        <div>Product  price: {{ product.price }}</div>
+        <div>Product price: {{ product.price }}</div>
         <div>Product discount: {{ product.discount }}</div>
         <div>Product archieved: {{ product.archieved }}</div>
     </div>
-    <div><a href="{% url 'shopapp:product_update' pk=product.pk %}">Update product</a></div>
+    {% if perms.shopapp.change_product and user.id == product.created_by_id or user.is_superuser %}
+    <div>
+        <a href="{% url 'shopapp:product_update' pk=product.pk %}">Update product</a>
     </div>
-    <div><a href="{% url 'shopapp:product_delete' pk=product.pk %}">Delete product</a></div>
+    {% endif %}
+    {% if perms.shopapp.delete_product and user.id == product.created_by_id or user.is_superuser %}
+    <div>
+        <a href="{% url 'shopapp:product_delete' pk=product.pk %}">Delete product</a>
+    </div>
+    {% endif %}
     <div>
         <a href="{% url 'shopapp:products_list' %}">Back to products list</a>
     </div>

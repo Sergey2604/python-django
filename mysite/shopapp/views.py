@@ -1,6 +1,7 @@
 from timeit import default_timer
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group, User
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
@@ -53,13 +54,21 @@ class ProductsListView(ListView):
     queryset = Product.objects.filter(archieved = False)
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'add_product'
     model = Product
-    fields = 'name', 'description', 'price', 'discount'
+    fields = '__all__'
     success_url = reverse_lazy('shopapp:products_list')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = form.cleaned_data.get('id')
+        form.instance.created_by = user
+        return response
 
-class ProductUpdateView(UpdateView):
+
+class ProductUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'change_product'
     model = Product
     fields = 'name', 'description', 'price', 'discount'
     template_name_suffix = '_update_form'
@@ -88,12 +97,15 @@ class OrderCreateView(CreateView):
     success_url = reverse_lazy('shopapp:orders_list')
 
 
-class OrdersListView(ListView):
+class OrdersListView(LoginRequiredMixin, ListView):
     queryset = Order.objects.select_related('user').prefetch_related('products')
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = 'view_order'
     queryset = Order.objects.select_related('user').prefetch_related('products')
+
+
 class OrderUpdateView(UpdateView):
     model = Order
     fields = 'user', 'products', 'promocode', 'delivery_address'

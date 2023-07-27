@@ -10,17 +10,22 @@
         <div>
             {% for product in products %}
                 <div>
-                    <p><a href="{% url 'shopapp:product_details' pk=product.pk %}">Name: {{ product.name }}</a></p>
+                    {% if perms.shopapp.view_product or user.is_superuser %}
+                        <p><a href="{% url 'shopapp:product_details' pk=product.pk %}">Name: {{ product.name }}</a></p>
+                    {% else %}
+                        <p>Name: {{ product.name }}</p>
+                    {% endif %}
                     <p>Price: {{ product.price }}</p>
                     <p>Discount: {% firstof product.discount 'No discount' %}</p>
                 </div>
             {% endfor %}
-
         </div>
     {% else %}
         No products yet
     {% endif %}
     <div>
-        <a href="{% url 'shopapp:create_product' %}">Create new product</a>
+        {% if perms.shopapp.create_product or user.is_superuser %}
+            <a href="{% url 'shopapp:create_product' %}">Create new product</a>
+        {% endif %}
     </div>
 {% endblock %}
