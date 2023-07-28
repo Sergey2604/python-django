@@ -1,6 +1,6 @@
 from timeit import default_timer
 
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group, User
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse, get_object_or_404
@@ -55,20 +55,17 @@ class ProductsListView(ListView):
 
 
 class ProductCreateView(PermissionRequiredMixin, CreateView):
-    permission_required = 'add_product'
+    permission_required = 'shopapp.add_product'
     model = Product
-    fields = '__all__'
+    fields = 'name', 'description', 'discount', 'price'
     success_url = reverse_lazy('shopapp:products_list')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        user = form.cleaned_data.get('id')
-        form.instance.created_by = user
-        return response
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
 
 
-class ProductUpdateView(PermissionRequiredMixin, UpdateView):
-    permission_required = 'change_product'
+class ProductUpdateView(UserPassesTestMixin, UpdateView):
     model = Product
     fields = 'name', 'description', 'price', 'discount'
     template_name_suffix = '_update_form'
@@ -78,6 +75,16 @@ class ProductUpdateView(PermissionRequiredMixin, UpdateView):
             'shopapp:product_details',
             kwargs = {'pk': self.object.pk}
         )
+
+    def test_func(self):
+        if self.request.user.is_superuser:
+            return True
+
+        self.object = self.get_object()
+
+        has_edit_perm = self.request.user.has_perm("shopapp.change_product")
+        created_by_current_user = self.object.created_by == self.request.user
+        return has_edit_perm and created_by_current_user
 
 
 class ProductDeleteView(DeleteView):
