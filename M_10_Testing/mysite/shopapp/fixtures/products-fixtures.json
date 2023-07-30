@@ -1,0 +1,119 @@
+[
+  {
+    "model": "shopapp.product",
+    "pk": 1,
+    "fields": {
+      "name": "Laptop",
+      "description": "Incidunt praesentium tenetur nisi temporibus?",
+      "price": "1999.00",
+      "discount": 0,
+      "created_at": null,
+      "archived": false,
+      "created_by": 1
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 2,
+    "fields": {
+      "name": "Desktop",
+      "description": "Praesentium tenetur vitae facere mollitia, libero perspiciatis magnam dolore harum accusantium repellat hic incidunt distinctio. Neque quibusdam et. Velit rem ea nam quia eos maxime commodi necessitatibus eius, facilis nobis praesentium dolorum, quibusdam rerum aperiam fugit dolorem earum, similique dolor ut enim? Temporibus officiis dolorem quaerat provident amet minus consequuntur harum commodi facilis, reprehenderit et inventore adipisci nostrum esse eos eaque placeat tempora.",
+      "price": "2999.00",
+      "discount": 10,
+      "created_at": null,
+      "archived": false,
+      "created_by": 1
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 3,
+    "fields": {
+      "name": "Smartphone",
+      "description": "",
+      "price": "999.00",
+      "discount": 25,
+      "created_at": null,
+      "archived": false,
+      "created_by": 1
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 4,
+    "fields": {
+      "name": "Desktop",
+      "description": "great desktop",
+      "price": "2000.00",
+      "discount": 0,
+      "created_at": null,
+      "archived": false,
+      "created_by": 1
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 5,
+    "fields": {
+      "name": "Phone2",
+      "description": "This phone better, than Phone1.\r\nThis is a great phone!",
+      "price": "1234.52",
+      "discount": 0,
+      "created_at": null,
+      "archived": true,
+      "created_by": 1
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 6,
+    "fields": {
+      "name": "Tablet 3",
+      "description": "New tablet",
+      "price": "999.00",
+      "discount": 5,
+      "created_at": null,
+      "archived": false,
+      "created_by": 2
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 7,
+    "fields": {
+      "name": "New phone",
+      "description": "great phone",
+      "price": "1999.00",
+      "discount": 5,
+      "created_at": null,
+      "archived": false,
+      "created_by": 4
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 8,
+    "fields": {
+      "name": "ddd",
+      "description": "ddd",
+      "price": "999.00",
+      "discount": 5,
+      "created_at": null,
+      "archived": false,
+      "created_by": 3
+    }
+  },
+  {
+    "model": "shopapp.product",
+    "pk": 9,
+    "fields": {
+      "name": "Desktop",
+      "description": "swef",
+      "price": "10.00",
+      "discount": 16545,
+      "created_at": null,
+      "archived": false,
+      "created_by": 1
+    }
+  }
+]
