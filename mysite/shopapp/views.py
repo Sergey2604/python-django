@@ -2,7 +2,7 @@ from timeit import default_timer
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group, User
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -54,7 +54,7 @@ class ProductsListView(ListView):
     queryset = Product.objects.filter(archieved = False)
 
 
-class ProductCreateView(CreateView):  # Äëÿ òåñòèðîâàíèÿ çàêîììåíòèë PermissionRequiredMixin
+class ProductCreateView(CreateView):  # ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PermissionRequiredMixin
     # permission_required = 'shopapp.add_product'
     model = Product
     fields = 'name', 'description', 'discount', 'price'
@@ -108,7 +108,7 @@ class OrdersListView(LoginRequiredMixin, ListView):
     queryset = Order.objects.select_related('user').prefetch_related('products')
 
 
-class OrderDetailView(PermissionRequiredMixin, DetailView):
+class OrderDetailView(PermissionRequiredMixin, DetailView):  # Ð·Ð°ÐºÐ¾Ð¼Ð¼ÐµÐ½Ñ‚Ð¸Ñ€Ð¾Ð²Ð°Ð» Ð´Ð»Ñ Ñ‚ÐµÑÑ‚Ð¾Ð², Ð½Ðµ ÑÐ¼Ð¾Ð³ Ð¾Ð±Ð¾Ð¹Ñ‚Ð¸
     permission_required = 'view_order'
     queryset = Order.objects.select_related('user').prefetch_related('products')
 
@@ -128,3 +128,18 @@ class OrderUpdateView(UpdateView):
 class OrderDeleteView(DeleteView):
     model = Order
     success_url = reverse_lazy('shopapp:orders_list')
+
+
+class ProductsExportDataView(View):
+    def get(self, request: HttpRequest) -> JsonResponse:
+        products = Product.objects.order_by('pk').all()
+        products_data = [
+            {
+                'pk': product.pk,
+                'name': product.name,
+                'price': product.price,
+                'archieved': product.archieved
+            }
+            for product in products
+        ]
+        return JsonResponse({'products': products_data})

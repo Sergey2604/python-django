@@ -1,11 +1,15 @@
+import datetime
 from random import choices
 from string import ascii_letters
 
-from django.contrib.auth.models import User
+import myauth
+import shopapp.admin_mixins
+from django.conf import settings
+from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 from django.urls import reverse
 
-from shopapp.models import Product
+from shopapp.models import Product, Order
 
 
 class ProductCreateViewTestCase(TestCase):
@@ -68,11 +72,101 @@ class ProductDetailsViewTestCase(TestCase):
 
 class ProductsListViewTestCase(TestCase):
     fixtures = [
-        'shopapp/fixtures/fixtures-shopapp.json'
+        'shopapp/fixtures/fixtures-product.json'
     ]
 
     def test_products_list(self):
         response = self.client.get(reverse('shopapp:products_list'))
-        for product in Product.objects.filter(archieved = False).all():
-            Product.created_by_id=User
-            self.assertContains(response,product.name)
+        self.assertQuerysetEqual(
+            qs = Product.objects.filter(archieved = False).all(),
+            values = (p.pk for p in response.context['products']),
+            transform = lambda p: p.pk
+        )
+        self.assertTemplateUsed(response, 'shopapp/products_list.html')
+
+
+class OrdersListViewTestCase(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.credentials = dict(username = 'bob-test', password = '12345')
+        cls.user = User.objects.create_user(**cls.credentials)
+
+    def setUp(self) -> None:
+        self.client.login(**self.credentials)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def test_orders_list(self):
+        response = self.client.get(reverse('shopapp:orders_list'))
+        self.assertContains(response, 'Orders')
+
+    def test_order_list_anonimous(self):
+        self.client.logout()
+        response = self.client.get(reverse('shopapp:orders_list'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(str(settings.LOGIN_URL), response.url)
+
+
+class ProductsExportViewTestCase(TestCase):
+    fixtures = [
+        'shopapp/fixtures/fixtures-product.json',
+    ]
+
+    def test_get_products_view(self):
+        response = self.client.get(
+            reverse('shopapp:products-export')
+        )
+        self.assertEqual(response.status_code, 200)
+        products = Product.objects.order_by('pk').all()
+        expected_data = [
+            {
+                'pk': product.pk,
+                'name': product.name,
+                'price': product.price,
+                'archieved': product.archieved
+            }
+            for product in products
+        ]
+        products_data = response.json()
+        self.assertEqual(
+            products_data['products'],
+            expected_data,
+        )
+
+
+class OrderDetailViewTestCase(TestCase):
+    fixtures = [
+        'shopapp/fixtures/fixtures-orders.json'
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.credentials = dict(username = 'Bob-test', password = '12345')
+        cls.user = User.objects.create_user(**cls.credentials)
+        cls.shopapp_perm = Permission.objects.get(codename = 'view_order')
+        cls.user.user_permissions.add(cls.shopapp_perm)
+
+    def setUp(self) -> None:
+        self.order = Order.objects.create(delivery_address = 'Lenina 22',
+                                          created_at = datetime.datetime.now(),
+                                          promocode = '12345',
+                                          user_id = self.user.pk,
+                                          )
+        self.client.login(**self.credentials)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def tearDown(self) -> None:
+        self.order.delete()
+
+    def test_order_details(self):
+        response = self.client.get(
+            reverse('shopapp:order_details', kwargs = {'pk': self.order.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        # self.assertContains(response, 'promocode')

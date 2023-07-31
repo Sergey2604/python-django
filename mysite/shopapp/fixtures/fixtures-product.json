@@ -70,7 +70,7 @@
     "fields": {
       "name": "Tablet 3",
       "description": "New tablet",
-      "price": "999.00",
+      "price": "999.52",
       "discount": 5,
       "created_at": "2023-07-28",
       "archieved": false,
@@ -114,6 +114,128 @@
       "created_at": "2023-07-28",
       "archieved": false,
       "created_by": 1
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$QGGVxxRnqk2vfoh5bwDodk$ZDefrenZCgO9x86eMmwtzRHNGIapmTh2pzWWm7o1F3A=",
+      "last_login": "2023-07-30T10:08:10.388Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "Sergey",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-07-06T19:52:12Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$KMfkCw5IQwpgM4fX5zwMjd$hiQJiqjtYHz61U7Bixf3zrps5vLn2DHvkCzITLlUSFg=",
+      "last_login": "2023-07-27T21:17:13Z",
+      "is_superuser": false,
+      "username": "Jack",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-07-26T21:50:40Z",
+      "groups": [],
+      "user_permissions": [
+        28
+      ]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$Q11q34d4p0jFksepqz7DS9$QSkL60mvvvSEtSzEWCCuOjTn039cWntLm/rdJEXB3b8=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "John",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-07-26T21:51:25.649Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$aI8y1Q3kYE7mxdvMtYSjEQ$IS5JKSD1Uzu+ye0KqBmL0Ntk+P+1luzm35y10IaGItY=",
+      "last_login": "2023-07-27T22:52:09.041Z",
+      "is_superuser": false,
+      "username": "Bob",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-07-26T22:57:00.462Z",
+      "groups": [
+        4
+      ],
+      "user_permissions": [
+        4
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "example_group",
+      "permissions": [
+        17,
+        18,
+        19,
+        20
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "another_group",
+      "permissions": [
+        13,
+        14,
+        15,
+        16
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "new group",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+      "name": "profile_manager",
+      "permissions": [
+        36
+      ]
     }
   }
 ]
