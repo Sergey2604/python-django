@@ -178,3 +178,29 @@ class OrderDetailViewTestCase(TestCase):
         for answer in response.context:
             if answer==self.order.pk:
                 self.assertEquals(answer, self.order.pk)
+
+class OrdersExportTestCase(TestCase):
+    fixtures = ['myauth/fixtures/fixtures-users.json',
+                'shopapp/fixtures/fixtures-orders.json',
+                'shopapp/fixtures/fixtures-product.json']
+    @classmethod
+    def setUpClass(cls):
+        cls.credentials=dict(username='bob-test',password='12345')
+        cls.user=User.objects.create_user(**cls.credentials)
+        cls.shopapp_perm = Permission.objects.get(codename = 'is_staff')
+        cls.user.user_permissions.add(cls.shopapp_perm)
+
+    def setUp(self) -> None:
+        self.client.login(**self.credentials)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def test_orders_export(self):
+        response=self.client.get(
+            reverse('shopapp:orders_export')
+        )
+
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response.context,['Delivery address','pk','Promocode','user_id','Products.id'])
