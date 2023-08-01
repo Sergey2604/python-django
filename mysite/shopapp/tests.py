@@ -1,9 +1,8 @@
 import datetime
 from random import choices
 from string import ascii_letters
+import json
 
-import myauth
-import shopapp.admin_mixins
 from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.test import TestCase
@@ -125,7 +124,7 @@ class ProductsExportViewTestCase(TestCase):
             {
                 'pk': product.pk,
                 'name': product.name,
-                'price': product.price,
+                'price': str(product.price),
                 'archieved': product.archieved
             }
             for product in products
@@ -149,6 +148,7 @@ class OrderDetailViewTestCase(TestCase):
         cls.shopapp_perm = Permission.objects.get(codename = 'view_order')
         cls.user.user_permissions.add(cls.shopapp_perm)
 
+
     def setUp(self) -> None:
         self.order = Order.objects.create(delivery_address = 'Lenina 22',
                                           created_at = datetime.datetime.now(),
@@ -157,16 +157,24 @@ class OrderDetailViewTestCase(TestCase):
                                           )
         self.client.login(**self.credentials)
 
+
     @classmethod
     def tearDownClass(cls):
         cls.user.delete()
 
+
     def tearDown(self) -> None:
         self.order.delete()
 
+
     def test_order_details(self):
+        print(self.user.user_permissions)
         response = self.client.get(
             reverse('shopapp:order_details', kwargs = {'pk': self.order.pk})
         )
         self.assertEqual(response.status_code, 200)
-        # self.assertContains(response, 'promocode')
+        self.assertContains(response, 'Promocode')
+        self.assertContains(response, 'Delivery address')
+        for answer in response.context:
+            if answer==self.order.pk:
+                self.assertEquals(answer, self.order.pk)

@@ -1,3 +1,4 @@
+# coding=utf-8
 from timeit import default_timer
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
@@ -109,7 +110,7 @@ class OrdersListView(LoginRequiredMixin, ListView):
 
 
 class OrderDetailView(PermissionRequiredMixin, DetailView):  # закомментировал для тестов, не смог обойти
-    permission_required = 'view_order'
+    permission_required = 'shopapp.view_order'
     queryset = Order.objects.select_related('user').prefetch_related('products')
 
 
