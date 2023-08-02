@@ -177,12 +177,12 @@ class OrderDetailViewTestCase(TestCase):
 
 
 class OrdersExportTestCase(TestCase):
-    fixtures = ['myauth/fixtures/fixtures-users.json',
-                'shopapp/fixtures/fixtures-orders.json',
-                'shopapp/fixtures/fixtures-product.json']
+    fixtures = ['shopapp/fixtures/fixtures-for-orders-export.json',
+                ]
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.credentials = dict(username = 'bob-test', password = '12345')
         cls.user = User.objects.create_user(**cls.credentials, is_staff = True)
         try:
@@ -199,10 +199,8 @@ class OrdersExportTestCase(TestCase):
         cls.user.delete()
 
     def test_orders_export(self):
-        response = self.client.get(
-            reverse('shopapp:orders-export')
-        )
-        print(response)
+        response = self.client.get(reverse('shopapp:orders-export'))
+        print('response', response)
         self.assertEqual(response.status_code, 200)
         orders = Order.objects.order_by('pk').all()
         expected_data = [

@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 from timeit import default_timer
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
@@ -146,20 +147,28 @@ class ProductsExportDataView(View):
         return JsonResponse({'products': products_data})
 
 
-class OrdersExportDataView(View):
+class OrdersExportDataView(UserPassesTestMixin, View):
     def get(self, request: HttpRequest) -> JsonResponse:
-        orders = Order.objects.order_by('pk').all()
-        print('orders',orders)
-        orders_data = [
-            {
-                'pk': order.pk,
-                'delivery address': order.delivery_address,
-                'promocode': order.promocode,
-                'created at': order.created_at,
-                'user id': order.user_id,
-                'products': order.products
-            }
-            for order in orders
-        ]
-        print('orders-data',orders_data)
-        return JsonResponse({'orders': orders_data})
+        if self.request.user.is_staff:
+            orders = Order.objects.order_by('pk').all()
+            print('orders', orders)
+            orders_data = [
+                {
+                    'pk': order.pk,
+                    'delivery address': order.delivery_address,
+                    'promocode': order.promocode,
+                    'created at': order.created_at,
+                    'user id': order.user_id,
+                    'products': order.products
+                }
+                for order in orders
+            ]
+            print('orders-data', orders_data)
+            return JsonResponse({'orders': orders_data})
+        print('У вас недостаточно прав для просмотра этой страницы')
+        return JsonResponse({'rules', 'У вас недостаточно прав для просмотра этой страницы'})
+
+    def test_func(self):
+        if self.request.user.is_staff:
+            return True
+        return False
