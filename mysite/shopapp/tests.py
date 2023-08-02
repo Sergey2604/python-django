@@ -148,7 +148,6 @@ class OrderDetailViewTestCase(TestCase):
         cls.shopapp_perm = Permission.objects.get(codename = 'view_order')
         cls.user.user_permissions.add(cls.shopapp_perm)
 
-
     def setUp(self) -> None:
         self.order = Order.objects.create(delivery_address = 'Lenina 22',
                                           created_at = datetime.datetime.now(),
@@ -157,15 +156,12 @@ class OrderDetailViewTestCase(TestCase):
                                           )
         self.client.login(**self.credentials)
 
-
     @classmethod
     def tearDownClass(cls):
         cls.user.delete()
 
-
     def tearDown(self) -> None:
         self.order.delete()
-
 
     def test_order_details(self):
         print(self.user.user_permissions)
@@ -176,19 +172,24 @@ class OrderDetailViewTestCase(TestCase):
         self.assertContains(response, 'Promocode')
         self.assertContains(response, 'Delivery address')
         for answer in response.context:
-            if answer==self.order.pk:
+            if answer == self.order.pk:
                 self.assertEquals(answer, self.order.pk)
+
 
 class OrdersExportTestCase(TestCase):
     fixtures = ['myauth/fixtures/fixtures-users.json',
                 'shopapp/fixtures/fixtures-orders.json',
                 'shopapp/fixtures/fixtures-product.json']
+
     @classmethod
     def setUpClass(cls):
-        cls.credentials=dict(username='bob-test',password='12345')
-        cls.user=User.objects.create_user(**cls.credentials)
-        cls.shopapp_perm = Permission.objects.get(codename = 'is_staff')
-        cls.user.user_permissions.add(cls.shopapp_perm)
+        cls.credentials = dict(username = 'bob-test', password = '12345')
+        cls.user = User.objects.create_user(**cls.credentials, is_staff = True)
+        try:
+            if not cls.user.is_staff:
+                raise BaseException
+        except BaseException('У вас недостаточно прав'):
+            pass
 
     def setUp(self) -> None:
         self.client.login(**self.credentials)
@@ -198,9 +199,25 @@ class OrdersExportTestCase(TestCase):
         cls.user.delete()
 
     def test_orders_export(self):
-        response=self.client.get(
-            reverse('shopapp:orders_export')
+        response = self.client.get(
+            reverse('shopapp:orders-export')
         )
-
-        self.assertEqual(response.status_code,200)
-        self.assertContains(response.context,['Delivery address','pk','Promocode','user_id','Products.id'])
+        print(response)
+        self.assertEqual(response.status_code, 200)
+        orders = Order.objects.order_by('pk').all()
+        expected_data = [
+            {
+                'pk': order.pk,
+                'Delivery address': order.delivery_address,
+                'Promocode': order.promocode,
+                'user_id': order.user_id,
+                'product_id': order.products.pk
+            }
+            for order in orders
+        ]
+        orders_data = response.json()
+        self.assertEqual(
+            orders_data['orders'],
+            expected_data,
+        )
+        self.assertContains(response.context, ['Delivery address', 'pk', 'Promocode', 'user_id', 'Products.id'])
