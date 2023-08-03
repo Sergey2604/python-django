@@ -157,9 +157,8 @@ class OrdersExportDataView(UserPassesTestMixin, View):
                     'pk': order.pk,
                     'delivery address': order.delivery_address,
                     'promocode': order.promocode,
-                    'created at': order.created_at,
-                    'user id': order.user_id,
-                    'products': order.products
+                    'user_id': order.user_id,
+                    'products': [p.pk for p in order.products.all()]
                 }
                 for order in orders
             ]
