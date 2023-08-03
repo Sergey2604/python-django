@@ -177,8 +177,7 @@ class OrderDetailViewTestCase(TestCase):
 
 
 class OrdersExportTestCase(TestCase):
-    fixtures = ['shopapp/fixtures/fixtures-for-orders-export.json',
-                ]
+    fixtures = ['shopapp/fixtures/fixtures-for-orders-export.json']
 
     @classmethod
     def setUpClass(cls):
@@ -206,10 +205,10 @@ class OrdersExportTestCase(TestCase):
         expected_data = [
             {
                 'pk': order.pk,
-                'Delivery address': order.delivery_address,
-                'Promocode': order.promocode,
+                'delivery_address': order.delivery_address,
+                'promocode': order.promocode,
                 'user_id': order.user_id,
-                'product_id': order.products.pk
+                'products': [p.pk for p in order.products.all()]
             }
             for order in orders
         ]
@@ -218,4 +217,3 @@ class OrdersExportTestCase(TestCase):
             orders_data['orders'],
             expected_data,
         )
-        self.assertContains(response.context, ['Delivery address', 'pk', 'Promocode', 'user_id', 'Products.id'])
