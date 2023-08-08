@@ -1,0 +1,24 @@
+{% extends 'myauth/base.html' %}
+{% block title %}
+    Users list
+{% endblock %}
+{% block body %}
+    <h3>Users list:</h3>
+    {% if users %}
+        {% for user in users %}
+            <div>
+{#                {% if user.is_staff or user.is_superuser %}#}
+{#                    <p><a href="{% url 'myauth:about-me' %}">Username: {{ user.username }}</a></p>#}
+{#                {% endif %}#}
+                <p>Username: {{ user.username }}</p>
+                {% if user.avatar %}
+                    <div>
+                        <img src="{{ user.avatar.url }}" alt="{{ user.avatar.name }}">
+                    </div>
+                {% else %}
+                    No avatar yet
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

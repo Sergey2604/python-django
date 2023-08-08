@@ -1,0 +1,15 @@
+{% extends 'myauth/base.html' %}
+
+{% block title %}
+    User update
+{% endblock %}
+{% block body %}
+    <h3>Update user {{ user.username }}</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit">Submit</button>
+    </form>
+
+
+{% endblock %}

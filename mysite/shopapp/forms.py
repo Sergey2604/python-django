@@ -1,3 +1,4 @@
+# coding=utf-8
 from django import forms
 from django.contrib.auth.models import Group
 from django.forms import ModelForm
@@ -9,6 +10,10 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = "name", "price", "description", "discount"
+
+    images = forms.ImageField(
+        widget = forms.ClearableFileInput(attrs = {'multiple': True})
+    )
 
 
 class OrderForm(forms.ModelForm):

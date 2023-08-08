@@ -1,17 +1,16 @@
 # coding=utf-8
-import json
 from timeit import default_timer
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from shopapp.models import Product, Order
-from .forms import ProductForm, OrderForm, GroupForm
+from shopapp.models import Product, Order, ProductImage
+from .forms import GroupForm, ProductForm
 
 
 class ShopIndexView(View):
@@ -45,7 +44,8 @@ class GroupsListView(View):
 
 class ProductDetailsView(DetailView):
     template_name = 'shopapp/product-details.html'
-    model = Product
+    # model = Product
+    queryset = Product.objects.prefetch_related('images')
     context_object_name = 'product'
 
 
@@ -59,7 +59,7 @@ class ProductsListView(ListView):
 class ProductCreateView(CreateView):  # ��� ������������ ����������� PermissionRequiredMixin
     # permission_required = 'shopapp.add_product'
     model = Product
-    fields = 'name', 'description', 'discount', 'price'
+    fields = 'name', 'description', 'discount', 'price', 'preview'
     success_url = reverse_lazy('shopapp:products_list')
 
     def form_valid(self, form):
@@ -69,8 +69,9 @@ class ProductCreateView(CreateView):  # ��� ����������
 
 class ProductUpdateView(UserPassesTestMixin, UpdateView):
     model = Product
-    fields = 'name', 'description', 'price', 'discount'
+    # fields = 'name', 'description', 'price', 'discount', 'preview'
     template_name_suffix = '_update_form'
+    form_class = ProductForm
 
     def get_success_url(self):
         return reverse(
@@ -87,7 +88,14 @@ class ProductUpdateView(UserPassesTestMixin, UpdateView):
         has_edit_perm = self.request.user.has_perm("shopapp.change_product")
         created_by_current_user = self.object.created_by == self.request.user
         return has_edit_perm and created_by_current_user
-
+    def form_valid(self, form):
+        response=super().form_valid(form)
+        for image in form.files.getlist('images'):
+            ProductImage.objects.create(
+                product = self.object,
+                image=image
+            )
+        return response
 
 class ProductDeleteView(DeleteView):
     model = Product

@@ -1,10 +1,10 @@
 {% extends 'myauth/base.html' %}
 
 {% block title %}
-About me
+    About me
 {% endblock %}
 {% block body %}
-<h1>User info</h1>
+    <h1>User info</h1>
     {% if user.is_authenticated %}
         <h2>Details</h2>
         <p>Username: {{ user.username }}</p>
@@ -12,11 +12,18 @@ About me
         <p>Last name: {{ user.last_name }}</p>
         <p>E-mail: {{ user.email }}</p>
         <p>Bio: {{ user.profile.bio }}</p>
-
+        <div><h3>Avatar:</h3></div>
+        {% if user.avatar %}
+            <div>
+                <img src="{{ user.avatar.url }}" alt="user.avatar.name">
+            </div>
+        {% else %}
+            No avatar yet
+        {% endif %}
 
     {% else %}
         <h2>User is anonymous</h2>
-    {% endif %} 
-    
-    
+    {% endif %}
+
+
 {% endblock %}

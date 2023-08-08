@@ -5,9 +5,38 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, ListView, UpdateView
 
+from .forms import ProfileForm
 from myauth.models import Profile
+
+
+class UsersListView(ListView):
+    template_name = 'myauth/users_list.html'
+    context_object_name = 'users'
+    model = Profile
+    # queryset = Profile.objects.prefetch_related('avatar')
+
+
+class UserUpdateView(UpdateView):
+    model = Profile
+    template_name_suffix = '_update_form'
+    fields = '__all__'
+    # form_class = ProfileForm
+
+    def get_success_url(self):
+        return reverse(
+            'myauth:user-list',
+            kwargs = {'pk': self.object.pk}
+        )
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        for image in form.files.getlist('images'):
+            Profile.objects.update_or_create(
+                user = self.object,
+                avatar = image
+            )
+        return response
 
 
 class AboutMeView(TemplateView):
@@ -74,6 +103,7 @@ def get_session_view(request: HttpRequest) -> HttpResponse:
     value = request.session.get('foobar')
     return HttpResponse(f'Session value: {value!r}')
 
+
 class FooBarView(View):
-    def get(self,request:HttpRequest)->JsonResponse:
-        return JsonResponse({'foo':'bar','spam':'eggs'})
+    def get(self, request: HttpRequest) -> JsonResponse:
+        return JsonResponse({'foo': 'bar', 'spam': 'eggs'})

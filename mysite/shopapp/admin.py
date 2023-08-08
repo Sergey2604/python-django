@@ -3,12 +3,15 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from .admin_mixins import ExportAsCSVMixin
-from .models import Product, Order
+from .models import Product, Order, ProductImage
 
 
 class OrderInline(admin.TabularInline):
     model = Product.orders.through
 
+
+class ProductInline(admin.StackedInline):
+    model = ProductImage
 
 @admin.action(description='Archived products')
 def mark_archieved(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet):
@@ -23,7 +26,9 @@ def mark_unarchieved(modeladmin: admin.ModelAdmin, request: HttpRequest, queryse
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
     actions = [mark_archieved, mark_unarchieved, 'export_csv']
-    inlines = [OrderInline]
+    inlines = [OrderInline,
+               ProductInline,
+               ]
     # list_display = 'pk', 'name', 'description', 'price', 'discount', 'created_at', 'archieved'
     list_display = 'pk', 'name', 'description_short', 'price', 'discount', 'created_at', 'archieved'
     list_display_links = 'pk', 'name', 'description_short'
@@ -36,6 +41,9 @@ class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
         ('Price options', {
             'fields': ('price', 'discount'),
             'classes': ('wide', 'collapse',),
+        }),
+        ('images', {
+            'fields': ('preview',),
         }),
         ('Extra options', {
             'fields': ('archieved',),
