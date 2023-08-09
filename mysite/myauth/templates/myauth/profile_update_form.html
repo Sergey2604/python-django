@@ -4,12 +4,12 @@
     User update
 {% endblock %}
 {% block body %}
-    <h3>Update user {{ user.username }}</h3>
+    <h3>Update user {% firstof user_upd.username user_upd.first_name user_upd.pk %}</h3>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-    <button type="submit">Submit</button>
+        <button type="submit">Submit</button>
     </form>
-
-
+<div><a href="{% url 'myauth:user-list' %}">Return to users list</a></div>
+<div><a href="{% url 'myauth:user-info' pk=user_upd.pk %}">Return to user info</a></div>
 {% endblock %}

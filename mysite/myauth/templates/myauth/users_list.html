@@ -5,20 +5,25 @@
 {% block body %}
     <h3>Users list:</h3>
     {% if users %}
-        {% for user in users %}
+        {% for userr in users %}
             <div>
-{#                {% if user.is_staff or user.is_superuser %}#}
-{#                    <p><a href="{% url 'myauth:about-me' %}">Username: {{ user.username }}</a></p>#}
-{#                {% endif %}#}
-                <p>Username: {{ user.username }}</p>
-                {% if user.avatar %}
+                <p><a href="{% url 'myauth:user-info' pk=userr.pk %}">Username: {{ userr.username }}</a></p>
+
+                {% if userr.profile.avatar %}
                     <div>
-                        <img src="{{ user.avatar.url }}" alt="{{ user.avatar.name }}">
+                        <img src="{{ userr.profile.avatar.url }}" alt="{{ userr.profile.avatar.name }}">
                     </div>
                 {% else %}
                     No avatar yet
                 {% endif %}
             </div>
+            {% if user.is_staff or user.is_superuser or user.profile.pk == userr.pk %}
+                <a href="{% url 'myauth:user-update' pk=userr.pk %}">
+                    <button type="button">Edit profile</button>
+                </a>
+            {% endif %}
+
         {% endfor %}
+
     {% endif %}
 {% endblock %}

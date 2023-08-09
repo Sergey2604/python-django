@@ -1,46 +1,74 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, CreateView, ListView, UpdateView
+from django.views.generic import TemplateView, CreateView, ListView, UpdateView, DetailView
 
-from .forms import ProfileForm
+from .forms import UserForm
 from myauth.models import Profile
 
 
 class UsersListView(ListView):
     template_name = 'myauth/users_list.html'
     context_object_name = 'users'
-    model = Profile
+    model = User
     # queryset = Profile.objects.prefetch_related('avatar')
 
 
-class UserUpdateView(UpdateView):
-    model = Profile
+class UserUpdateView(UserPassesTestMixin, UpdateView):
+    model = User
     template_name_suffix = '_update_form'
-    fields = '__all__'
-    # form_class = ProfileForm
+    form_class = UserForm
+    context_object_name = 'user_upd'
 
     def get_success_url(self):
         return reverse(
             'myauth:user-list',
             kwargs = {'pk': self.object.pk}
         )
+
     def form_valid(self, form):
         response = super().form_valid(form)
         for image in form.files.getlist('images'):
-            Profile.objects.update_or_create(
+            User.objects.update_or_create(
                 user = self.object,
                 avatar = image
             )
         return response
 
+    def get_object(self, queryset = None):
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        user = User.objects.select_related("profile").get(pk = pk)
+        try:
+            return user.profile
+        except Profile.DoesNotExist:
+            return Profile.objects.create(user = user)
+
+    def test_func(self):
+        if self.request.user.is_staff or self.request.user.is_superuser or (self.request.user.pk == Profile.user.pk):
+            return True
+        return False
+
 
 class AboutMeView(TemplateView):
     template_name = 'myauth/about-me.html'
+
+
+class UserInfoView(DetailView):
+    template_name = 'myauth/about_user.html'
+    model = User
+    context_object_name = 'userr'
+
+    def get_success_url(self):
+        return reverse(
+            'shopapp:product_details',
+            kwargs = {'pk': self.object.pk}
+        )
 
 
 class RegisterView(CreateView):

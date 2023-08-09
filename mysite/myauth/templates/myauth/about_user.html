@@ -1,0 +1,34 @@
+{% extends 'myauth/base.html' %}
+{% block title %}
+    User info
+{% endblock %}
+{% block body %}
+    <h3>Info about {{ userr.username }}:</h3>
+    <form method="get" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>Username: {{ userr.username }}</p>
+        <p>First name: {{ userr.first_name }}</p>
+        <p>Second name: {{ userr.last_name }}</p>
+        <p>Bio: {{ userr.profile.bio }}</p>
+        <div>Avatar:
+            {% if userr.profile.avatar %}
+                <div>
+                    <img src="{{ userr.profile.avatar.url }}" alt="{{ userr.profile.avatar.name }}">
+                </div>
+            {% else %}
+                No avatar yet
+            {% endif %}
+        </div>
+    </form>
+
+
+    <div><a href="{% url 'myauth:user-list' %}">Return to users list</a></div>
+    <div><a href="{% url 'myauth:user-info' pk=userr.pk %}">Return to user info</a></div>
+    {% if user.is_staff or user.is_superuser or user.profile.pk == userr.pk %}
+                <a href="{% url 'myauth:user-update' pk=userr.pk %}">
+                    <button type="button">Edit profile</button>
+                </a>
+            {% endif %}
+
+
+{% endblock %}

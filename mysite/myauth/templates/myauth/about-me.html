@@ -25,5 +25,6 @@
         <h2>User is anonymous</h2>
     {% endif %}
 
-
+    <div><a href="{% url 'myauth:user-list' %}">Return to users list</a></div>
+    <div><a href="{% url 'myauth:user-update' pk=user.pk %}">Edit profile</a></div>
 {% endblock %}

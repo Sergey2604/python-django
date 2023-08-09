@@ -1,13 +1,12 @@
 # coding=utf-8
 from django import forms
+from django.contrib.auth.models import User
 
 from myauth.models import Profile
 
 
-class ProfileForm(forms.ModelForm):
+class UserForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = "__all__"
+        fields = 'bio', 'avatar'
 
-    images = forms.ImageField(
-        widget = forms.ClearableFileInput({'multiple':True}))
