@@ -10,6 +10,6 @@
         {{ form.as_p }}
         <button type="submit">Submit</button>
     </form>
-<div><a href="{% url 'myauth:user-list' %}">Return to users list</a></div>
-<div><a href="{% url 'myauth:user-info' pk=user_upd.pk %}">Return to user info</a></div>
+    <div><a href="{% url 'myauth:user-list' %}">Return to users list</a></div>
+    <div><a href="{% url 'myauth:user-info' pk=user_upd.pk %}">Return to user info</a></div>
 {% endblock %}

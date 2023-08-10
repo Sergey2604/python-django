@@ -17,7 +17,6 @@ class UsersListView(ListView):
     template_name = 'myauth/users_list.html'
     context_object_name = 'users'
     model = User
-    # queryset = Profile.objects.prefetch_related('avatar')
 
 
 class UserUpdateView(UserPassesTestMixin, UpdateView):
@@ -29,7 +28,6 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         return reverse(
             'myauth:user-list',
-            kwargs = {'pk': self.object.pk}
         )
 
     def form_valid(self, form):
@@ -50,7 +48,12 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
             return Profile.objects.create(user = user)
 
     def test_func(self):
-        if self.request.user.is_staff or self.request.user.is_superuser or (self.request.user.pk == Profile.user.pk):
+        print(self.request.user)
+        print(self.request.user.is_staff)
+        if self.request.user.is_staff:
+            return True
+        self.object = self.get_object()
+        if self.request.user.pk == self.object.user.pk:
             return True
         return False
 
