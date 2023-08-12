@@ -17,14 +17,15 @@ class Product(models.Model):
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
 
-    name = models.CharField(max_length = 100, verbose_name = _('name'))
-    description = models.TextField(null = False, blank = True)
-    price = models.DecimalField(default = 0, max_digits = 8, decimal_places = 2)
-    discount = models.SmallIntegerField(default = 0)
-    created_at = models.DateField(auto_now_add = True)
-    archieved = models.BooleanField(default = False, verbose_name = _('archived'))
-    created_by = models.ForeignKey(User, on_delete = models.DO_NOTHING, blank = True)
-    preview = models.ImageField(null = True, blank = True, upload_to = product_preview_directory_path)
+    name = models.CharField(max_length = 100, verbose_name = _('название'))
+    description = models.TextField(null = False, blank = True, verbose_name = _('описание'))
+    price = models.DecimalField(default = 0, max_digits = 8, decimal_places = 2, verbose_name = _('цена'))
+    discount = models.SmallIntegerField(default = 0, verbose_name = _('скидка'))
+    created_at = models.DateField(auto_now_add = True, verbose_name = _('дата создания'))
+    archieved = models.BooleanField(default = False, verbose_name = _('заархивировано?'))
+    created_by = models.ForeignKey(User, on_delete = models.DO_NOTHING, blank = True, verbose_name = _('кем создано'))
+    preview = models.ImageField(null = True, blank = True, upload_to = product_preview_directory_path,
+                                verbose_name = _('превью'))
 
     def __str__(self) -> str:
         return f'Product (pk={self.pk}, name={self.name!r})'
@@ -44,12 +45,12 @@ class ProductImage(models.Model):
 
 
 class Order(models.Model):
-    delivery_address = models.TextField(null = True, blank = True)
-    promocode = models.CharField(max_length = 20, null = False, blank = True)
-    created_at = models.DateField(auto_now_add = True)
-    user = models.ForeignKey(User, on_delete = models.PROTECT)
-    products = models.ManyToManyField(Product, related_name = 'orders')
-    receipt = models.FileField(null = True, blank = True, upload_to = 'orders/receipts/')
+    delivery_address = models.TextField(null = True, blank = True, verbose_name = _('адрес доставки'))
+    promocode = models.CharField(max_length = 20, null = False, blank = True, verbose_name = _('промокод'))
+    created_at = models.DateField(auto_now_add = True, verbose_name = _('дата создания'))
+    user = models.ForeignKey(User, on_delete = models.PROTECT, verbose_name = _('кем создан'))
+    products = models.ManyToManyField(Product, related_name = 'orders', verbose_name = _('продукты в заказе'))
+    receipt = models.FileField(null = True, blank = True, upload_to = 'orders/receipts/', verbose_name = _('чек'))
 
     class Meta:
         verbose_name = _('order')

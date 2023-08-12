@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-12 17:15+0300\n"
+"POT-Creation-Date: 2023-08-12 19:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,18 +48,62 @@ msgid "Products"
 msgstr "Товары"
 
 #: .\shopapp\models.py:20
-msgid "name"
-msgstr "Наименование товара"
+msgid "название"
+msgstr "название"
+
+#: .\shopapp\models.py:21
+msgid "описание"
+msgstr "описание"
+
+#: .\shopapp\models.py:22
+msgid "цена"
+msgstr "цена"
+
+#: .\shopapp\models.py:23
+msgid "скидка"
+msgstr "скидка"
+
+#: .\shopapp\models.py:24 .\shopapp\models.py:50
+msgid "дата создания"
+msgstr "дата создания"
 
 #: .\shopapp\models.py:25
-msgid "archived"
-msgstr "Товар в архиве?"
+msgid "заархивировано?"
+msgstr "заархивировано?"
 
-#: .\shopapp\models.py:55
+#: .\shopapp\models.py:26
+msgid "кем создано"
+msgstr "кем создано"
+
+#: .\shopapp\models.py:28
+msgid "превью"
+msgstr "превью"
+
+#: .\shopapp\models.py:48
+msgid "адрес доставки"
+msgstr "адрес доставки"
+
+#: .\shopapp\models.py:49
+msgid "промокод"
+msgstr "промокод"
+
+#: .\shopapp\models.py:51
+msgid "кем создан"
+msgstr "кем создан"
+
+#: .\shopapp\models.py:52
+msgid "продукты в заказе"
+msgstr "продукты в заказе"
+
+#: .\shopapp\models.py:53
+msgid "чек"
+msgstr "чек"
+
+#: .\shopapp\models.py:56
 msgid "order"
 msgstr "Заказ"
 
-#: .\shopapp\models.py:56
+#: .\shopapp\models.py:57
 msgid "orders"
 msgstr "Заказы"
 
@@ -83,7 +127,11 @@ msgstr "Скидка"
 msgid "Product archived"
 msgstr "Товар в архиве?"
 
-#: .\shopapp\templates\shopapp\product-details.html:15
+#: .\shopapp\templates\shopapp\product-details.html:20
+msgid "Images"
+msgstr "Картинки"
+
+#: .\shopapp\templates\shopapp\product-details.html:22
 #, python-format
 msgid ""
 "\n"
@@ -105,10 +153,6 @@ msgstr[2] ""
 "\n"
 "                Доступно %(images_count)s картинок\n"
 "            "
-
-#: .\shopapp\templates\shopapp\product-details.html:26
-msgid "Images"
-msgstr "Картинки"
 
 #: .\shopapp\templates\shopapp\product-details.html:35
 msgid "No images uploaded yet"
@@ -193,3 +237,8 @@ msgstr ""
 "            </a>\n"
 "        "
 
+#~ msgid "name"
+#~ msgstr "Наименование товара"
+
+#~ msgid "archived"
+#~ msgstr "Товар в архиве?"

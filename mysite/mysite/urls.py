@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 URL configuration for mysite project.
 
@@ -21,7 +22,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-
+    path('api/', include('myapiapp.urls'))
 ]
 urlpatterns += i18n_patterns(
     path('accounts/', include('myauth.urls')),

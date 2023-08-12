@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-12 17:15+0300\n"
+"POT-Creation-Date: 2023-08-12 19:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,18 +46,62 @@ msgid "Products"
 msgstr "Products"
 
 #: .\shopapp\models.py:20
-msgid "name"
-msgstr "Product name"
+msgid "название"
+msgstr "product name"
+
+#: .\shopapp\models.py:21
+msgid "описание"
+msgstr "description"
+
+#: .\shopapp\models.py:22
+msgid "цена"
+msgstr "price"
+
+#: .\shopapp\models.py:23
+msgid "скидка"
+msgstr "discount"
+
+#: .\shopapp\models.py:24 .\shopapp\models.py:50
+msgid "дата создания"
+msgstr "created at"
 
 #: .\shopapp\models.py:25
-msgid "archived"
-msgstr "Product archived?"
+msgid "заархивировано?"
+msgstr "archive"
 
-#: .\shopapp\models.py:55
+#: .\shopapp\models.py:26
+msgid "кем создано"
+msgstr "created by"
+
+#: .\shopapp\models.py:28
+msgid "превью"
+msgstr "preview"
+
+#: .\shopapp\models.py:48
+msgid "адрес доставки"
+msgstr "delivery address"
+
+#: .\shopapp\models.py:49
+msgid "промокод"
+msgstr "promocode"
+
+#: .\shopapp\models.py:51
+msgid "кем создан"
+msgstr "created by"
+
+#: .\shopapp\models.py:52
+msgid "продукты в заказе"
+msgstr "products"
+
+#: .\shopapp\models.py:53
+msgid "чек"
+msgstr "receipt"
+
+#: .\shopapp\models.py:56
 msgid "order"
 msgstr "Order"
 
-#: .\shopapp\models.py:56
+#: .\shopapp\models.py:57
 msgid "orders"
 msgstr "Orders"
 
@@ -81,7 +125,11 @@ msgstr "Product discount"
 msgid "Product archived"
 msgstr "Products archived"
 
-#: .\shopapp\templates\shopapp\product-details.html:15
+#: .\shopapp\templates\shopapp\product-details.html:20
+msgid "Images"
+msgstr "Images"
+
+#: .\shopapp\templates\shopapp\product-details.html:22
 #, python-format
 msgid ""
 "\n"
@@ -99,10 +147,6 @@ msgstr[1] ""
 "\n"
 "                There are %(images_count)s images\n"
 "            "
-
-#: .\shopapp\templates\shopapp\product-details.html:26
-msgid "Images"
-msgstr "Images"
 
 #: .\shopapp\templates\shopapp\product-details.html:35
 msgid "No images uploaded yet"
@@ -176,3 +220,8 @@ msgid ""
 "        "
 msgstr ""
 
+#~ msgid "name"
+#~ msgstr "Product name"
+
+#~ msgid "archived"
+#~ msgstr "Product archived?"
