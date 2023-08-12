@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import gettext_lazy as _, ngettext as __
 
 
 def product_preview_directory_path(instance: 'Product', filename: str) -> str:
@@ -13,13 +14,15 @@ def product_preview_directory_path(instance: 'Product', filename: str) -> str:
 class Product(models.Model):
     class Meta:
         ordering = ['name']
+        verbose_name = _('Product')
+        verbose_name_plural = _('Products')
 
-    name = models.CharField(max_length = 100)
+    name = models.CharField(max_length = 100, verbose_name = _('name'))
     description = models.TextField(null = False, blank = True)
     price = models.DecimalField(default = 0, max_digits = 8, decimal_places = 2)
     discount = models.SmallIntegerField(default = 0)
     created_at = models.DateField(auto_now_add = True)
-    archieved = models.BooleanField(default = False)
+    archieved = models.BooleanField(default = False, verbose_name = _('archived'))
     created_by = models.ForeignKey(User, on_delete = models.DO_NOTHING, blank = True)
     preview = models.ImageField(null = True, blank = True, upload_to = product_preview_directory_path)
 
@@ -47,3 +50,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete = models.PROTECT)
     products = models.ManyToManyField(Product, related_name = 'orders')
     receipt = models.FileField(null = True, blank = True, upload_to = 'orders/receipts/')
+
+    class Meta:
+        verbose_name = _('order')
+        verbose_name_plural = _('orders')

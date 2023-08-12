@@ -14,6 +14,9 @@ from .forms import GroupForm, ProductForm
 
 
 class ShopIndexView(View):
+
+
+
     def get(self, request: HttpRequest) -> HttpResponse:
         products = [
             ('Laptop', 1999),
@@ -22,7 +25,8 @@ class ShopIndexView(View):
         ]
         context = {
             "time_running": default_timer(),
-            'products': products
+            'products': products,
+            'items': 1,
         }
         return render(request, 'shopapp/shop-index.html', context = context)
 
@@ -88,14 +92,16 @@ class ProductUpdateView(UserPassesTestMixin, UpdateView):
         has_edit_perm = self.request.user.has_perm("shopapp.change_product")
         created_by_current_user = self.object.created_by == self.request.user
         return has_edit_perm and created_by_current_user
+
     def form_valid(self, form):
-        response=super().form_valid(form)
+        response = super().form_valid(form)
         for image in form.files.getlist('images'):
             ProductImage.objects.create(
                 product = self.object,
-                image=image
+                image = image
             )
         return response
+
 
 class ProductDeleteView(DeleteView):
     model = Product

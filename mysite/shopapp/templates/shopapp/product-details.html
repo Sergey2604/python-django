@@ -1,41 +1,52 @@
 {% extends 'shopapp/base.html' %}
+{% load i18n %}
 {% block title %}
-    product #{{ product.pk }}
+    {% translate 'product' %} #{{ product.pk }}
 {% endblock %}
 
 {% block body %}
-    <h1>Product <strong>{{ product.name }}</strong></h1>
+    <h1>{% translate 'Product' %} <strong>{{ product.name }}</strong></h1>
     <div>
-        <div>Product description: <em>{{ product.description }}</em></div>
-        <div>Product price: {{ product.price }}</div>
-        <div>Product discount: {{ product.discount }}</div>
-        <div>Product archived: {{ product.archieved }}</div>
+        <div>{% translate 'Product description' %}: <em>{{ product.description }}</em></div>
+        <div>{% translate 'Product price' %}: {{ product.price }}</div>
+        <div>{% translate 'Product discount' %}: {{ product.discount }}</div>
+        <div>{% translate 'Product archived' %}: {{ product.archieved }}</div>
+
 
         {% if product.preview %}
+
             <img src="{{ product.preview.url }}" alt="{{ product.preview.name }}">
         {% endif %}
-        <h3>Images:</h3>
+        <h3>{% translate 'Images' %}:</h3>
+        <div>
+            {% blocktranslate count images_count=product.images.all|length %}
+                There is only one image
+                {% plural %}
+                There are {{ images_count }} images
+            {% endblocktranslate %}
+        </div>
         {% for img in product.images.all %}
             <div>
                 <img src="{{ img.images.url }}" alt="{{ img.images.name }}">
                 <div>{{ img.description }}</div>
             </div>
+
         {% empty %}
-            <div>No images uploaded yet</div>
+            <div>{% translate 'No images uploaded yet' %}</div>
         {% endfor %}
 
     </div>
     {% if perms.shopapp.change_product and user.id == product.created_by_id or user.is_superuser %}
         <div>
-            <a href="{% url 'shopapp:product_update' pk=product.pk %}">Update product</a>
+            <a href="{% url 'shopapp:product_update' pk=product.pk %}">{% translate 'Update product' %}</a>
         </div>
     {% endif %}
     {% if perms.shopapp.delete_product and user.id == product.created_by_id or user.is_superuser %}
         <div>
-            <a href="{% url 'shopapp:product_delete' pk=product.pk %}">Delete product</a>
+            <a href="{% url 'shopapp:product_delete' pk=product.pk %}">{% translate 'Delete product' %}</a>
         </div>
     {% endif %}
     <div>
-        <a href="{% url 'shopapp:products_list' %}">Back to products list</a>
+        <a href="{% url 'shopapp:products_list' %}">{% translate 'Back to products list' %}</a>
     </div>
 {% endblock %}
