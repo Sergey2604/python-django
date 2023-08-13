@@ -1,23 +1,40 @@
 # coding=utf-8
+"""
+В этом модуле лежат различные наборы представлений.
+
+Разные view интернет-магазина: по товарам, заказам и т.д.
+"""
+
 from timeit import default_timer
 
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, \
+    PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
+    JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
+    DeleteView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from shopapp.models import Product, Order, ProductImage
 from .forms import GroupForm, ProductForm
 from .serializers import ProductSerializer, OrderSerializer
 
 
+@extend_schema(description = 'Product views CRUD')
 class ProductViewSet(ModelViewSet):
+    """
+    Набор представлений для действий над Product.
+
+    Полный CRUD для сущностей товара
+    """
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [
@@ -38,6 +55,19 @@ class ProductViewSet(ModelViewSet):
         'price',
         'discount',
     ]
+
+    @extend_schema(
+        summary = 'Get one product by ID',
+        description = 'Retrieves **product**, returns 404 if not found',
+        responses = {
+            200: ProductSerializer,
+            404: OpenApiResponse(
+                description = 'Empty response, product by ID not found'
+            )
+        }
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(*args, **kwargs)
 
 
 class OrderViewSet(ModelViewSet):
@@ -103,7 +133,8 @@ class ProductsListView(ListView):
     queryset = Product.objects.filter(archieved = False)
 
 
-class ProductCreateView(CreateView):  # ��� ������������ ����������� PermissionRequiredMixin
+class ProductCreateView(
+    CreateView):  # ��� ������������ ����������� PermissionRequiredMixin
     # permission_required = 'shopapp.add_product'
     model = Product
     fields = 'name', 'description', 'discount', 'price', 'preview'
@@ -164,12 +195,15 @@ class OrderCreateView(CreateView):
 
 
 class OrdersListView(LoginRequiredMixin, ListView):
-    queryset = Order.objects.select_related('user').prefetch_related('products')
+    queryset = Order.objects.select_related('user').prefetch_related(
+        'products')
 
 
-class OrderDetailView(PermissionRequiredMixin, DetailView):  # закомментировал для тестов, не смог обойти
+class OrderDetailView(PermissionRequiredMixin,
+                      DetailView):  # закомментировал для тестов, не смог обойти
     permission_required = 'shopapp.view_order'
-    queryset = Order.objects.select_related('user').prefetch_related('products')
+    queryset = Order.objects.select_related('user').prefetch_related(
+        'products')
 
 
 class OrderUpdateView(UpdateView):
@@ -223,7 +257,8 @@ class OrdersExportDataView(UserPassesTestMixin, View):
             print('orders-data', orders_data)
             return JsonResponse({'orders': orders_data})
         print('У вас недостаточно прав для просмотра этой страницы')
-        return JsonResponse({'rules', 'У вас недостаточно прав для просмотра этой страницы'})
+        return JsonResponse(
+            {'rules', 'У вас недостаточно прав для просмотра этой страницы'})
 
     def test_func(self):
         if self.request.user.is_staff:
