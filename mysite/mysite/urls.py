@@ -37,6 +37,7 @@ urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('shop/', include('shopapp.urls')),
     path('req/', include('requestdataapp.urls')),
+    path('blog/', include('blogapp.urls')),
 
 )
 if settings.DEBUG:
