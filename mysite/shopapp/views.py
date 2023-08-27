@@ -26,6 +26,10 @@ from shopapp.models import Product, Order, ProductImage
 from .forms import GroupForm, ProductForm
 from .serializers import ProductSerializer, OrderSerializer
 
+import logging
+
+log = logging.getLogger(__name__)
+
 
 @extend_schema(description = 'Product views CRUD')
 class ProductViewSet(ModelViewSet):
@@ -101,6 +105,8 @@ class ShopIndexView(View):
             'products': products,
             'items': 1,
         }
+        log.debug('Products for shop index: %s', products)
+        log.info('Rendering shop index')
         return render(request, 'shopapp/shop-index.html', context = context)
 
 
