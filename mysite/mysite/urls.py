@@ -19,9 +19,12 @@ from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from drf_spectacular.views import SpectacularRedocView, \
     SpectacularSwaggerView, SpectacularAPIView
+
+from .sitemaps import sitemaps
 
 urlpatterns = [
     path('admin/doc/', include('django.contrib.admindocs.urls')),
@@ -31,6 +34,7 @@ urlpatterns = [
         url_name = 'schema'), name = 'swagger'),
     path('api/schema/redoc', SpectacularRedocView.as_view(
         url_name = 'schema'), name = 'redoc'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps, }, name = 'sitemaps')
 ]
 urlpatterns += i18n_patterns(
     path('accounts/', include('myauth.urls')),
@@ -45,5 +49,5 @@ if settings.DEBUG:
         static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
     )
     urlpatterns.append(
-        path('__debug__/',include('debug_toolbar.urls'))
+        path('__debug__/', include('debug_toolbar.urls'))
     )

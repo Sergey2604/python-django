@@ -19,12 +19,12 @@ from django.utils.translation import gettext_lazy as _
 import sentry_sdk
 
 sentry_sdk.init(
-  dsn="https://f903bc0a015689c3b9132e594fdbb7c1@o4505784431280128.ingest.sentry.io/4505784441765888",
+    dsn = "https://f903bc0a015689c3b9132e594fdbb7c1@o4505784431280128.ingest.sentry.io/4505784441765888",
 
-  # Set traces_sample_rate to 1.0 to capture 100%
-  # of transactions for performance monitoring.
-  # We recommend adjusting this value in production.
-  traces_sample_rate=1.0
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate = 1.0
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admindocs',
+    'django.contrib.sitemaps',
 
     'debug_toolbar',
     'rest_framework',

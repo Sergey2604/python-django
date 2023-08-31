@@ -1,9 +1,14 @@
+# coding=utf-8
 from django.contrib import admin
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import path
 
 from .admin_mixins import ExportAsCSVMixin
+from .common import save_csv_products
 from .models import Product, Order, ProductImage
+from .forms import CSVImportForm
 
 
 class OrderInline(admin.TabularInline):
@@ -13,18 +18,22 @@ class OrderInline(admin.TabularInline):
 class ProductInline(admin.StackedInline):
     model = ProductImage
 
-@admin.action(description='Archived products')
-def mark_archieved(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet):
-    queryset.update(archieved=True)
+
+@admin.action(description = 'Archived products')
+def mark_archieved(modeladmin: admin.ModelAdmin, request: HttpRequest,
+                   queryset: QuerySet):
+    queryset.update(archieved = True)
 
 
-@admin.action(description='Unarchieved products')
-def mark_unarchieved(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet):
-    queryset.update(archieved=False)
+@admin.action(description = 'Unarchieved products')
+def mark_unarchieved(modeladmin: admin.ModelAdmin, request: HttpRequest,
+                     queryset: QuerySet):
+    queryset.update(archieved = False)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
+    change_list_template = 'shopapp/products_changelist.html'
     actions = [mark_archieved, mark_unarchieved, 'export_csv']
     inlines = [OrderInline,
                ProductInline,
@@ -57,6 +66,32 @@ class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
             return obj.description
         return obj.description[:50] + '...'
 
+    def import_csv(self, request: HttpRequest) -> HttpResponse:
+        if request.method=='GET':
+            form = CSVImportForm()
+            context = {
+                'form': form,
+            }
+            return render(request,'admin/csv_form.html',context)
+        form=CSVImportForm(request.POST,request.FILES)
+        if not form.is_valid():
+            context={'form':form}
+            return render(request,'admin/csv_form.html',context,status = 400)
+        save_csv_products(
+            file=form.files['csv_file'].file,
+            encoding = request.encoding
+        )
+        self.message_user(request,'Data from CSV was imported')
+        return redirect('..')
+    def get_urls(self):
+        urls=super().get_urls()
+        new_urls=[
+            path('import-products-csv/',
+                 self.import_csv,
+                 name='import-products-csv',)
+        ]
+        return new_urls+urls
+
 
 # class ProductInline(admin.TabularInline):
 class ProductInline(admin.StackedInline):
@@ -70,7 +105,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display_links = 'delivery_address', 'promocode'
 
     def get_queryset(self, request):
-        return Order.objects.select_related('user').prefetch_related('products')
+        return Order.objects.select_related('user').prefetch_related(
+            'products')
 
     def user_verbose(self, obj: Order) -> str:
         return obj.user.username or obj.user.first_name

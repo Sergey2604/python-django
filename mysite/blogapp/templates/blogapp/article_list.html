@@ -8,7 +8,10 @@
     <h1>Article's List</h1>
     {% if article %}
         {% for articl in article %}
-            <p>Title: {{ articl.title }}</p>
+            <p>
+                <a href="{% url 'blogapp:article_detail' pk=articl.pk %}">
+                    {{ articl.title }}</a>
+            </p>
             <p>Date: {{ articl.pub_date }}</p>
             <p>Author: {{ articl.author.name }}</p>
             <p>Category: {{ articl.category.name }}</p>
@@ -17,7 +20,7 @@
             {% endfor %}
             </div>
         {% endfor %}
-        {% else %}
+    {% else %}
         <h2>No articles yet</h2>
     {% endif %}
 

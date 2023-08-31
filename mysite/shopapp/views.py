@@ -4,12 +4,13 @@
 
 Разные view интернет-магазина: по товарам, заказам и т.д.
 """
-
+from csv import DictWriter
 from timeit import default_timer
 
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
+from django.contrib.syndication.views import Feed
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     JsonResponse
 from django.shortcuts import render, redirect, reverse
@@ -18,11 +19,16 @@ from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     DeleteView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.parsers import MultiPartParser
+from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from shopapp.models import Product, Order, ProductImage
+from .common import save_csv_products
 from .forms import GroupForm, ProductForm
 from .serializers import ProductSerializer, OrderSerializer
 
@@ -72,6 +78,40 @@ class ProductViewSet(ModelViewSet):
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(*args, **kwargs)
+
+    @action(methods = ['get'], detail = False)
+    def download_csv(self, request: Request) -> Response:
+        filename = 'products-export.csv'
+        response = HttpResponse('text/csv')
+        response[
+            'Content-Disposition'] = f'attachment;filename={filename}'
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = [
+            'name',
+            'description',
+            'price',
+            'discount',
+        ]
+        queryset = queryset.only(*fields)
+        writer = DictWriter(response, fieldnames = fields)
+        writer.writeheader()
+        for product in queryset:
+            writer.writerow({
+                field: getattr(product, field)
+                for field in fields
+            })
+        return response
+
+    @action(methods = ['post'],
+            detail = False,
+            parser_classes = [MultiPartParser])
+    def upload_csv(self, request: Request) -> Response:
+        products = save_csv_products(
+            file = request.FILES['file'].file,
+            encoding = request.encoding,
+        )
+        serializer = self.get_serializer(products, many = True)
+        return Response(serializer.data)
 
 
 class OrderViewSet(ModelViewSet):
@@ -241,9 +281,9 @@ class ProductsExportDataView(View):
             }
             for product in products
         ]
-        elem=products_data[0]
-        name=elem['name']
-        print('name: ',name)
+        elem = products_data[0]
+        name = elem['name']
+        print('name: ', name)
         return JsonResponse({'products': products_data})
 
 
@@ -273,3 +313,24 @@ class OrdersExportDataView(UserPassesTestMixin, View):
         if self.request.user.is_staff:
             return True
         return False
+
+
+class LatestProductsFeed(Feed):
+    title = 'Latest products'
+    description = 'Updates on changes and addition products'
+    link = reverse_lazy('shopapp:products_list')
+
+    def items(self):
+        return (
+            Product.objects
+            .filter(created_at__isnull = False)
+            .order_by('-created_at')[:5])
+
+    def item_title(self, item: Product):
+        return item.name
+
+    def item_description(self, item: Product):
+        return item.description[:200]
+
+    def item_link(self, item: Product):
+        return reverse('shopapp:product_details', kwargs = {'pk': item.pk})

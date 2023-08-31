@@ -1,0 +1,14 @@
+text/csvname,description,price,discount
+'Desktop 15','A new desktop',3500.00,12
+'Laptop 14','A new laptop',2599.00,7
+'Laptop 16','The best laptop',2999.00,10
+Desktop,"Praesentium tenetur vitae facere mollitia, libero perspiciatis magnam dolore harum accusantium repellat hic incidunt distinctio. Neque quibusdam et. Velit rem ea nam quia eos maxime commodi necessitatibus eius, facilis nobis praesentium dolorum, quibusdam rerum aperiam fugit dolorem earum, similique dolor ut enim? Temporibus officiis dolorem quaerat provident amet minus consequuntur harum commodi facilis, reprehenderit et inventore adipisci nostrum esse eos eaque placeat tempora.",2999.00,10
+Desktop,great desktop,2000.00,0
+Desktop,swef,10.00,16545
+Laptop,Incidunt praesentium tenetur nisi temporibus?,1999.00,0
+New phone,great phone,1999.00,5
+Phone2,"This phone better, than Phone1.
+This is a great phone!",1234.52,0
+Smartphone,,999.00,25
+Tablet 3,New tablet,999.00,5
+ddd,ddd,999.00,5
