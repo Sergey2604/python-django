@@ -1,3 +1,5 @@
+from random import random
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -7,7 +9,9 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, CreateView, ListView, UpdateView, DetailView
+from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView, CreateView, ListView, \
+    UpdateView, DetailView
 from django.utils.translation import gettext_lazy as _, ngettext
 
 from .forms import UserForm
@@ -16,7 +20,6 @@ from myauth.models import Profile
 
 class HelloView(View):
     welcome_message = _('Welcome, hello world')
-
 
     def get(self, request: HttpRequest) -> HttpResponse:
         items_str = request.GET.get(key = 'items') or 0
@@ -122,7 +125,8 @@ def login_view(request: HttpRequest) -> HttpResponse:
     if user:
         login(request, user)
         return redirect('/admin/')
-    return render(request, 'myauth/login.html', {'error': 'Invalid login credentials'})
+    return render(request, 'myauth/login.html',
+                  {'error': 'Invalid login credentials'})
 
 
 def logout_view(request: HttpRequest):
@@ -140,9 +144,10 @@ def set_cookie_view(request: HttpRequest) -> HttpResponse:
     return response
 
 
+@cache_page(60 * 2)
 def get_cookie_view(request: HttpRequest) -> HttpResponse:
     value = request.COOKIES.get('foo', 'getting cookies')
-    return HttpResponse(f'Cookie value: {value!r}')
+    return HttpResponse(f'Cookie value: {value!r} + {random()}')
 
 
 def set_session_view(request: HttpRequest) -> HttpResponse:

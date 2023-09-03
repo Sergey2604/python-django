@@ -1,30 +1,34 @@
 {% extends 'myauth/base.html' %}
+{% load cache %}
 
 {% block title %}
     About me
 {% endblock %}
 {% block body %}
     <h1>User info</h1>
+    <div>{% now 'u' %}</div>
     {% if user.is_authenticated %}
         <h2>Details</h2>
-        <p>Username: {{ user.username }}</p>
-        <p>First name: {{ user.first_name }}</p>
-        <p>Last name: {{ user.last_name }}</p>
-        <p>E-mail: {{ user.email }}</p>
-        <p>Bio: {{ user.profile.bio }}</p>
-        <div><h3>Avatar:</h3></div>
-        {% if user.avatar %}
-            <div>
-                <img src="{{ user.avatar.url }}" alt="user.avatar.name">
-            </div>
-        {% else %}
-            No avatar yet
-        {% endif %}
-
+        {% cache 100 userinfo user.username %}
+            <p>Username: {{ user.username }}</p>
+            <p>First name: {{ user.first_name }}</p>
+            <p>Last name: {{ user.last_name }}</p>
+            <p>E-mail: {{ user.email }}</p>
+            <p>Bio: {{ user.profile.bio }}</p>
+            <div><h3>Avatar:</h3></div>
+            {% if user.avatar %}
+                <div>
+                    <img src="{{ user.avatar.url }}" alt="user.avatar.name">
+                </div>
+            {% else %}
+                No avatar yet
+            {% endif %}
+        {% endcache %}
     {% else %}
         <h2>User is anonymous</h2>
     {% endif %}
 
     <div><a href="{% url 'myauth:user-list' %}">Return to users list</a></div>
-    <div><a href="{% url 'myauth:user-update' pk=user.pk %}">Edit profile</a></div>
+    <div><a href="{% url 'myauth:user-update' pk=user.pk %}">Edit profile</a>
+    </div>
 {% endblock %}

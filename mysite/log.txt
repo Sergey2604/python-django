@@ -1,6 +1,0 @@
-# coding=utf-8
-2023-08-23 00:38:10,945 [INFO] django.utils.autoreload: Watching for file changes with StatReloader
-2023-08-23 00:38:24,039 [INFO] shopapp.views: Rendering shop index
-2023-08-23 00:38:25,252 [INFO] shopapp.views: Rendering shop index
-2023-08-23 00:38:26,443 [INFO] shopapp.views: Rendering shop index
-2023-08-23 00:38:27,596 [INFO] shopapp.views: Rendering shop index

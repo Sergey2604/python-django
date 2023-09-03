@@ -78,6 +78,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -90,7 +91,10 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'requestdataapp.middlewares.CountRequestMiddlewares',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
+
+CACHE_MIDDLEWARE_SECONDS = 300
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -119,6 +123,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
+        # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        # 'LOCATION': 'C://Cache_django'
     }
 }
 
@@ -198,30 +210,30 @@ LOGFILE_NAME = BASE_DIR / "log.log"
 LOGFILE_SIZE = 400
 LOGFILE_COUNT = 3
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-        }
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'logfile': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGFILE_NAME,
-            'maxBytes': LOGFILE_SIZE,
-            'backupCount': LOGFILE_COUNT,
-            'formatter': 'verbose',
-        }
-    },
-    'root': {
-        'handlers': ['console', 'logfile'],
-        'level': 'DEBUG'
-    },
-
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+#         }
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'verbose',
+#         },
+#         'logfile': {
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': LOGFILE_NAME,
+#             'maxBytes': LOGFILE_SIZE,
+#             'backupCount': LOGFILE_COUNT,
+#             'formatter': 'verbose',
+#         }
+#     },
+#     'root': {
+#         'handlers': ['console', 'logfile'],
+#         'level': 'DEBUG'
+#     },
+#
+# }

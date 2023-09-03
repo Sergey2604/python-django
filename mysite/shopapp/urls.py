@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.urls import path, include
+from django.views.decorators.cache import cache_page
 from rest_framework.routers import DefaultRouter
 
 from .serializers import OrderSerializer
@@ -17,7 +18,10 @@ from .views import (ShopIndexView,
                     OrderDeleteView,
                     ProductsExportDataView,
                     OrdersExportDataView,
-                    ProductViewSet, OrderViewSet, LatestProductsFeed,
+                    ProductViewSet,
+                    OrderViewSet,
+                    LatestProductsFeed,
+                    UserOrdersListView,
                     )
 
 app_name = 'shopapp'
@@ -55,5 +59,7 @@ urlpatterns = [
          name = 'order_update'),
     path('orders/<int:pk>/delete/', OrderDeleteView.as_view(),
          name = 'order_delete'),
+    path('orders/users/<int:user_id>/', UserOrdersListView.as_view(),
+         name = 'users_orders')
 
 ]
