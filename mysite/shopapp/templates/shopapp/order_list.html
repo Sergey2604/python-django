@@ -9,35 +9,38 @@
     <h1>Orders:</h1>
     {% if object_list %}
         <p>
-            Пользователь {% firstof user.first_name user.username %}
+            Пользователь {% firstof users.get.first_name users.get.username %}
             выполнил следующие заказы:</p>
         <div>
-            {#            {% cache 300 person userlist user.username %}#}
-            {% for order in object_list %}
-                <div>
-                    <p>
-                        <a href="{% url 'shopapp:order_details' pk=order.pk %}"
-                        >Order {{ order.pk }}
-                            details</a></p>
-                    <p>Order by
-                        {% firstof order.user.first_name order.user.username %}
-                    </p>
-                    <p>Promocode: {{ order.promocode }}</p>
-                    <p>Delivery address {{ order.delivery_address }}</p>
-                    <div>Products in order</div>
-                    <ul>
-                        {% for product in order.products.all %}
-                            <li>{{ product.name }} for
-                                ${{ product.price }}</li>
-                        {% endfor %}
-                        <p>Created order time: {{ order.created_at }}</p>
-                    </ul>
-                </div>
-            {% endfor %}
-            {#            {% endcache %}#}
+            {% cache 300 person userlist user.username %}
+                {% for order in object_list %}
+
+                    <div>
+                        <p>
+                            <a href="{% url 'shopapp:order_details' pk=order.pk %}"
+                            >Order {{ order.pk }}
+                                details</a></p>
+                        <p>Order by
+                            {% firstof order.user.first_name order.user.username %}
+                        </p>
+                        <p>Promocode: {{ order.promocode }}</p>
+                        <p>Delivery address {{ order.delivery_address }}</p>
+                        <div>Products in order</div>
+                        <ul>
+                            {% for product in order.products.all %}
+                                <li>{{ product.name }} for
+                                    ${{ product.price }}</li>
+                            {% endfor %}
+                            <p>Created order time: {{ order.created_at }}</p>
+                        </ul>
+                    </div>
+
+                {% endfor %}
+            {% endcache %}
         </div>
     {% else %}
-        <p>У пользователя {% firstof user.first_name user.username %} ещё нет
+        <p>У пользователя {% firstof users.get.first_name users.get.username %}
+            ещё нет
             заказов</p>
     {% endif %}
     <div>

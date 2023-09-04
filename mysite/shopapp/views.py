@@ -14,7 +14,8 @@ from django.contrib.syndication.views import Feed
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     JsonResponse
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_list_or_404, \
+    get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -296,7 +297,7 @@ class ProductsExportDataView(View):
                 }
                 for product in products
             ]
-        cache.set(cache_key, products_data, 300)
+            cache.set(cache_key, products_data, 300)
         elem = products_data[0]
         name = elem['name']
         print('name: ', name)
@@ -362,19 +363,48 @@ class UserOrdersListView(LoginRequiredMixin, ListView):
 
     #
     def get_queryset(self):
-        user = self.kwargs.get('user_id')
-        print(user)
-        self.owner = Order.objects.filter(user_id = user).prefetch_related(
-            'user').all()
-        return self.owner
+        user_id = self.kwargs.get('user_id')
+        print(user_id)
+        owner = Order.objects.filter(user_id = user_id).all()
+        return owner
 
-    def get(self, *args, **kwargs):
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         user = self.kwargs.get('user_id')
         context = {
-            'user': User,
+            'user_id': user,
+            'object_list': self.get_queryset(),
+            'users': User.objects.filter(id = user)
         }
-        if User.objects.filter(id = user).exists():
-            return render(self.request, 'shopapp/order_list.html',
+        if get_object_or_404(User, pk = user):
+            return render(request, 'shopapp/order_list.html',
                           context = context)
-        return render(self.request, 'shopapp/order_list.html',
-                      context = context, status = 404)
+        return render(request, 'shopapp/order_list.html', status = 404)
+
+
+class UsersOrdersExportView(View):
+    def get(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
+
+        user_id = self.kwargs.get('user_id')
+        cache_key = 'orders_data_export'
+        orders_data = cache.get(cache_key)
+        if orders_data is None:
+            orders = Order.objects.filter(user_id = user_id).all()
+            orders_data = [
+                {
+                    'id': order.pk,
+                    'delivery_address': order.delivery_address,
+                    'promocode': order.promocode,
+                    'user_id': order.user_id,
+                    'created_at': order.created_at
+                }
+                for order in orders
+            ]
+            cache.set(cache_key, orders_data, 300)
+        cache.delete(cache_key)
+        print('user', user_id)
+        elem = orders_data[0]
+        pk = elem['id']
+        print('id: ', pk)
+        if get_object_or_404(User, pk = user_id):
+            return JsonResponse({'orders': orders_data})
+        return render(request, template_name = None, status = 404)
