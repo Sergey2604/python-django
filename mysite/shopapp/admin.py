@@ -67,30 +67,32 @@ class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
         return obj.description[:50] + '...'
 
     def import_csv(self, request: HttpRequest) -> HttpResponse:
-        if request.method=='GET':
+        if request.method == 'GET':
             form = CSVImportForm()
             context = {
                 'form': form,
             }
-            return render(request,'admin/csv_form.html',context)
-        form=CSVImportForm(request.POST,request.FILES)
+            return render(request, 'admin/csv_form.html', context)
+        form = CSVImportForm(request.POST, request.FILES)
         if not form.is_valid():
-            context={'form':form}
-            return render(request,'admin/csv_form.html',context,status = 400)
+            context = {'form': form}
+            return render(request, 'admin/csv_form.html', context,
+                          status = 400)
         save_csv_products(
-            file=form.files['csv_file'].file,
+            file = form.files['csv_file'].file,
             encoding = request.encoding
         )
-        self.message_user(request,'Data from CSV was imported')
+        self.message_user(request, 'Data from CSV was imported')
         return redirect('..')
+
     def get_urls(self):
-        urls=super().get_urls()
-        new_urls=[
+        urls = super().get_urls()
+        new_urls = [
             path('import-products-csv/',
                  self.import_csv,
-                 name='import-products-csv',)
+                 name = 'import-products-csv', )
         ]
-        return new_urls+urls
+        return new_urls + urls
 
 
 # class ProductInline(admin.TabularInline):
