@@ -17,16 +17,16 @@ import logging.config
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-import sentry_sdk
+# import sentry_sdk
 
-sentry_sdk.init(
-    dsn = "https://f903bc0a015689c3b9132e594fdbb7c1@o4505784431280128.ingest.sentry.io/4505784441765888",
-
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate = 1.0
-)
+# sentry_sdk.init(
+#     dsn = "https://f903bc0a015689c3b9132e594fdbb7c1@o4505784431280128.ingest.sentry.io/4505784441765888",
+#
+#     # Set traces_sample_rate to 1.0 to capture 100%
+#     # of transactions for performance monitoring.
+#     # We recommend adjusting this value in production.
+#     traces_sample_rate = 1.0
+# )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
